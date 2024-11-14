@@ -1,3 +1,7 @@
+using onepathapi.Data;
+using onepathapi.Models;
+using Microsoft.EntityFrameworkCore;
+
 namespace onepathapi.Services
 {
     public interface IAppointmentService
@@ -9,6 +13,13 @@ namespace onepathapi.Services
 
     public class AppointmentService : IAppointmentService
     {
+        private readonly ApplicationDbContext _context;
+
+        public AppointmentService(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         public string CreateAppointment()
         {
             return "Appointment created successfully!";

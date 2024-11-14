@@ -1,3 +1,7 @@
+using onepathapi.Data;
+using onepathapi.Models;
+using Microsoft.EntityFrameworkCore;
+
 namespace onepathapi.Services
 {
     public interface IScanService
@@ -8,6 +12,14 @@ namespace onepathapi.Services
 
     public class ScanService : IScanService
     {
+
+        private readonly ApplicationDbContext _context;
+
+        public ScanService(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         public object GetUserScans(string userId)
         {
             return new[]

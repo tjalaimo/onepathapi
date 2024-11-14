@@ -1,3 +1,7 @@
+using onepathapi.Data;
+using onepathapi.Models;
+using Microsoft.EntityFrameworkCore;
+
 namespace onepathapi.Services
 {
     public interface IProviderService
@@ -8,6 +12,14 @@ namespace onepathapi.Services
 
     public class ProviderService : IProviderService
     {
+
+        private readonly ApplicationDbContext _context;
+
+        public ProviderService(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         public object GetAllProviders()
         {
             return new[]

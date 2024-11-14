@@ -1,30 +1,30 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Projects\\onepathapi\\onepathapi.csproj": {}
+    "C:\\Projects\\onepath\\onepath-services\\onepathapi\\onepathapi.csproj": {}
   },
   "projects": {
-    "C:\\Projects\\onepathapi\\onepathapi.csproj": {
+    "C:\\Projects\\onepath\\onepath-services\\onepathapi\\onepathapi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Projects\\onepathapi\\onepathapi.csproj",
+        "projectUniqueName": "C:\\Projects\\onepath\\onepath-services\\onepathapi\\onepathapi.csproj",
         "projectName": "onepathapi",
-        "projectPath": "C:\\Projects\\onepathapi\\onepathapi.csproj",
-        "packagesPath": "C:\\Users\\tjala\\.nuget\\packages\\",
-        "outputPath": "C:\\Projects\\onepathapi\\obj\\",
+        "projectPath": "C:\\Projects\\onepath\\onepath-services\\onepathapi\\onepathapi.csproj",
+        "packagesPath": "C:\\Users\\tj\\.nuget\\packages\\",
+        "outputPath": "C:\\Projects\\onepath\\onepath-services\\onepathapi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\tjala\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\tj\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
-          "net8.0"
+          "net9.0"
         ],
         "sources": {
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net8.0": {
-            "targetAlias": "net8.0",
+          "net9.0": {
+            "targetAlias": "net9.0",
             "projectReferences": {}
           }
         },
@@ -36,12 +36,13 @@
         "restoreAuditProperties": {
           "enableAudit": "true",
           "auditLevel": "low",
-          "auditMode": "direct"
-        }
+          "auditMode": "all"
+        },
+        "SdkAnalysisLevel": "9.0.100"
       },
       "frameworks": {
-        "net8.0": {
-          "targetAlias": "net8.0",
+        "net9.0": {
+          "targetAlias": "net9.0",
           "dependencies": {
             "Azure.Core": {
               "target": "Package",
@@ -93,7 +94,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.403/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

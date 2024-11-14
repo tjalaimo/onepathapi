@@ -1,3 +1,7 @@
+using onepathapi.Data;
+using onepathapi.Models;
+using Microsoft.EntityFrameworkCore;
+
 namespace onepathapi.Services
 {
     public interface IChatService
@@ -8,6 +12,13 @@ namespace onepathapi.Services
 
     public class ChatService : IChatService
     {
+        private readonly ApplicationDbContext _context;
+
+        public ChatService(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         public object GetChats(string userId)
         {
             return new[]

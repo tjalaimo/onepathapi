@@ -1,3 +1,7 @@
+using onepathapi.Data;
+using onepathapi.Models;
+using Microsoft.EntityFrameworkCore;
+
 namespace onepathapi.Services
 {
     public interface IUserService
@@ -10,6 +14,14 @@ namespace onepathapi.Services
 
     public class UserService : IUserService
     {
+
+        private readonly ApplicationDbContext _context;
+
+        public UserService(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+        
         public string Register()
         {
             return "User registered successfully!";
