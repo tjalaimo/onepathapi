@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using onepathapi.Services;
+using onepathapi.Models;
+using onepathapi.DTOs;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -12,24 +14,38 @@ public class AppointmentsController : ControllerBase
         _appointmentService = appointmentService;
     }
 
-    [HttpPost("create")]
-    public IActionResult CreateAppointment()
+    [HttpGet("getAppointment")]
+    public async Task<IActionResult> getAppointment(int appointmentID)
     {
-        var result = _appointmentService.CreateAppointment();
-        return Ok(new { Message = result });
+        Appointment appointment = await _appointmentService.getAppointment(appointmentID);
+        if (appointment != null)
+        {
+            return Ok(appointment);
+        }
+        else
+        {
+            return NotFound();
+        }
     }
 
-    [HttpGet("user/{userId}")]
-    public IActionResult GetUserAppointments(string userId)
+    [HttpPost("create")]
+    public async Task<IActionResult> CreateAppointment([FromBody] Appointment appointment)
     {
-        var appointments = _appointmentService.GetUserAppointments(userId);
+        Appointment result = await _appointmentService.CreateAppointment(appointment);
+        return Ok(result);
+    }
+
+    [HttpGet("getUserAppointments/{patientId}")]
+    public async Task<IActionResult> GetUserAppointments(int patientId)
+    {
+        IEnumerable<Appointment> appointments = await _appointmentService.GetUserAppointments(patientId);
         return Ok(appointments);
     }
 
-    [HttpPost("checkin")]
-    public IActionResult CheckInAppointment()
+    [HttpPost("update")]
+    public async Task<IActionResult> UpdateAppointment([FromBody] Appointment appointment)
     {
-        var result = _appointmentService.CheckInAppointment();
-        return Ok(new { Message = result });
+        Appointment result = await _appointmentService.UpdateAppointment(appointment);
+        return Ok(result);
     }
 }

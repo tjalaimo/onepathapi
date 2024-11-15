@@ -38,6 +38,8 @@ builder.Services.AddScoped<IProviderService, ProviderService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<IScanService, ScanService>();
+builder.Services.AddScoped<IPatientService, PatientService>();
+builder.Services.AddScoped<IPostService, PostService>();
 
 
 //build

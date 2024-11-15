@@ -1,42 +1,78 @@
 using onepathapi.Data;
 using onepathapi.Models;
+using onepathapi.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace onepathapi.Services
 {
     public interface IAppointmentService
     {
-        string CreateAppointment();
-        object GetUserAppointments(string userId);
-        string CheckInAppointment();
+        Task<Appointment> getAppointment(int appointmentID);
+        Task<Appointment> CreateAppointment(Appointment newAppointment);
+        Task<IEnumerable<Appointment>> GetUserAppointments(int patientId);
+        Task<Appointment> UpdateAppointment(Appointment Appointment);
     }
 
     public class AppointmentService : IAppointmentService
     {
         private readonly ApplicationDbContext _context;
+        private readonly IPatientService _patientsService;
+        private readonly IProviderService _providerService;
 
-        public AppointmentService(ApplicationDbContext context)
+        public AppointmentService(ApplicationDbContext context, IPatientService patientsService, IProviderService providerService)
         {
             _context = context;
+            _patientsService = patientsService;
+            _providerService = providerService;
         }
 
-        public string CreateAppointment()
+        public async Task<Appointment> getAppointment(int appointmentID)
         {
-            return "Appointment created successfully!";
-        }
-
-        public object GetUserAppointments(string userId)
-        {
-            return new[]
+            Appointment appointment = await _context.Appointments.Where(a => a.AppointmentId == appointmentID).FirstAsync();
+            if (null != appointment.PatientId)
             {
-                new { Id = "A1", Date = "2024-10-14", Time = "10:00 AM", Provider = "Dr. Smith" },
-                new { Id = "A2", Date = "2024-10-15", Time = "2:00 PM", Provider = "Dr. Jane Doe" }
-            };
+                appointment.Patient = await _patientsService.GetPatient(appointment.PatientId.Value);
+            }
+            if (null != appointment.ProviderId)
+            {
+                appointment.Provider = await _providerService.GetProvider(appointment.ProviderId.Value);
+            }
+            return appointment;
         }
 
-        public string CheckInAppointment()
+        public async Task<Appointment> CreateAppointment(Appointment newAppointment)
         {
-            return "Check-in completed successfully!";
+            _context.Appointments.Add(newAppointment);
+            newAppointment.AppointmentId = await _context.SaveChangesAsync();
+            return newAppointment;
+        }
+
+        public async Task<IEnumerable<Appointment>> GetUserAppointments(int patientId)
+        {
+            IEnumerable<Appointment> appointments = await _context.Appointments.Where(a => a.PatientId == patientId).ToListAsync();
+            foreach (Appointment appointment in appointments)
+            {
+                if (null != appointment.PatientId)
+                {
+                    appointment.Patient = await _patientsService.GetPatient(appointment.PatientId.Value);
+                }
+                if (null != appointment.ProviderId)
+                {
+                    appointment.Provider = await _providerService.GetProvider(appointment.ProviderId.Value);
+                }
+            }
+            return appointments;
+        }
+
+        public async Task<Appointment> UpdateAppointment(Appointment appointment)
+        {
+            var _appointment = await _context.Appointments.FindAsync(appointment);
+            if (_appointment == null) throw new ArgumentException("Appointment not found");
+
+            _appointment = appointment;
+            await _context.SaveChangesAsync();
+
+            return _appointment;
         }
     }
 }

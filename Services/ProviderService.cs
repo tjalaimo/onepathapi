@@ -6,6 +6,7 @@ namespace onepathapi.Services
 {
     public interface IProviderService
     {
+        Task<Provider> GetProvider(int providerId);
         object GetAllProviders();
         object GetProviderDetails(string id);
     }
@@ -18,6 +19,11 @@ namespace onepathapi.Services
         public ProviderService(ApplicationDbContext context)
         {
             _context = context;
+        }
+
+        public async Task<Provider> GetProvider(int providerId)
+        {
+            return await _context.Providers.Where(p => p.ProviderId == providerId).FirstAsync();
         }
 
         public object GetAllProviders()

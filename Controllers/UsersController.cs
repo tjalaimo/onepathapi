@@ -39,4 +39,11 @@ public class UsersController : ControllerBase
         var user = _userService.GetCurrentUser();
         return Ok(user);
     }
+
+    [HttpGet("getUser")]
+    public IActionResult GetUser(int userId)
+    {
+        var user = _userService.GetUser(userId);
+        return Ok(user);
+    }
 }

@@ -20,6 +20,7 @@ namespace onepathapi.Data
         public DbSet<Message> Messages { get; set; }
         public DbSet<MessageThread> MessageThreads { get; set; }
 
+        /*
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -33,5 +34,6 @@ namespace onepathapi.Data
             modelBuilder.Entity<MessageThread>()
                 .HasIndex(mt => new { mt.InitiatorUserId, mt.RecipientUserId }).IsUnique();
         }
+        */
     }
 }
