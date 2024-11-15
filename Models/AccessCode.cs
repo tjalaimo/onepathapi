@@ -13,9 +13,8 @@ namespace onepathapi.Models
         public DateTime? EndDate { get; set; }
         public int GeneratorUserId { get; set; }
         public int RecipientUserId { get; set; }
-        [NotMapped]
-        public User GeneratorUser { get; set; }
-        [NotMapped]
-        public User RecipientUser { get; set; }
+
+        public virtual User GeneratorUser { get; set; } = new User();
+        public virtual User RecipientUser { get; set; } = new User();
     }
 }

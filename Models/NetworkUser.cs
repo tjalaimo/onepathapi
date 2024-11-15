@@ -9,9 +9,8 @@ namespace onepathapi.Models
         public int NetworkUserId { get; set; }
         public int NetworkId { get; set; }
         public int UserId { get; set; }
-        [NotMapped]
-        public Network Network { get; set; }
-        [NotMapped]
-        public User User { get; set; }
+
+        public virtual Network Network { get; set; }
+        public virtual User User { get; set; }
     }
 }

@@ -15,12 +15,26 @@ public class PatientsController : ControllerBase
     }
 
     [HttpGet("getPatient/{patientId}")]
-    public async Task<IActionResult> getPatient(int patientId)
+    public async Task<IActionResult> GetPatient(int patientId)
     {
-        Patient appointment = await _patientsService.GetPatient(patientId);
-        if (appointment != null)
+        BasePatientDTO patient = await _patientsService.GetPatient(patientId);
+        if (patient != null)
         {
-            return Ok(appointment);
+            return Ok(patient);
+        }
+        else
+        {
+            return NotFound();
+        }
+    }
+
+    [HttpGet("getPatientByUserId/{user_id}")]
+    public async Task<IActionResult> GetPatientByUserId(int user_id)
+    {
+        BasePatientDTO patient = await _patientsService.GetPatientByUserId(user_id);
+        if (patient != null)
+        {
+            return Ok(patient);
         }
         else
         {
@@ -29,10 +43,20 @@ public class PatientsController : ControllerBase
     }
 
     [HttpPost("getPatients")]
-    public async Task<IActionResult> getPatients([FromBody] PaginationRequest request)
+    public async Task<IActionResult> GetPatients([FromBody] PaginationRequest request)
     {
-        IEnumerable<Patient> patients = await _patientsService.GetPatients(request);
-        return Ok(patients);        
+        var (patients, totalPatients) = await _patientsService.GetPatients(request);
+
+        // Return paginated result along with total patient count
+        var result = new
+        {
+            TotalCount = totalPatients,
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize,
+            Patients = patients
+        };
+
+        return Ok(result);
     }
 
     [HttpPost("create")]

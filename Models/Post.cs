@@ -11,11 +11,9 @@ namespace onepathapi.Models
         public string? MediaUrl { get; set; }
         public DateTime? CreatedDate { get; set; }
         public int CreatedByUserId { get; set; }
-        [NotMapped]
-        public User CreatedByUser { get; set; }
-        [NotMapped]
-        public ICollection<PostLike> Likes { get; set; }
-        [NotMapped]
-        public ICollection<PostComment> Comments { get; set; }
+
+        public virtual User CreatedByUser { get; set; }
+        public virtual ICollection<PostLike> Likes { get; set; } = new List<PostLike>();
+        public virtual ICollection<PostComment> Comments { get; set; } = new List<PostComment>();
     }
 }

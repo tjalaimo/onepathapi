@@ -19,21 +19,13 @@ namespace onepathapi.Data
         public DbSet<NetworkUser> NetworkUsers { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<MessageThread> MessageThreads { get; set; }
+        public DbSet<Condition> Conditions { get; set; }
+        public DbSet<Medication> Medications { get; set; }
 
-        /*
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<NetworkUser>()
-                .HasKey(nu => new { nu.NetworkId, nu.UserId });
-
-            modelBuilder.Entity<PostLike>()
-                .HasKey(pl => new { pl.PostId, pl.LikedByUserId });
-
-            modelBuilder.Entity<MessageThread>()
-                .HasIndex(mt => new { mt.InitiatorUserId, mt.RecipientUserId }).IsUnique();
-        }
-        */
+            // Automatically apply all IEntityTypeConfiguration classes in this assembly
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+        }    
     }
 }

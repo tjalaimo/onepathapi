@@ -11,7 +11,7 @@ namespace onepathapi.Models
         public string? ProfilePictureUrl { get; set; }
         public string? Description { get; set; }
         public DateTime? CreatedDate { get; set; }
-        [NotMapped]
-        public ICollection<NetworkUser> Members { get; set; }
+
+        public virtual ICollection<NetworkUser> Members { get; set; }
     }
 }

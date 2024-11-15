@@ -1,14 +1,14 @@
+using Microsoft.EntityFrameworkCore;
 using onepathapi.Data;
 using onepathapi.Models;
-using Microsoft.EntityFrameworkCore;
+using onepathapi.DTOs;
 
 namespace onepathapi.Services
 {
     public interface IProviderService
     {
         Task<Provider> GetProvider(int providerId);
-        object GetAllProviders();
-        object GetProviderDetails(string id);
+        Task<(List<Provider>, int)> GetProviders(PaginationRequest request);        
     }
 
     public class ProviderService : IProviderService
@@ -23,28 +23,35 @@ namespace onepathapi.Services
 
         public async Task<Provider> GetProvider(int providerId)
         {
-            return await _context.Providers.Where(p => p.ProviderId == providerId).FirstAsync();
+            return await _context.Providers.Where(p => p.ProviderId == 10).FirstAsync();            
         }
 
-        public object GetAllProviders()
-        {
-            return new[]
-            {
-                new { Id = "P1", Name = "Dr. Smith", Location = "New York", Insurance = "XYZ Insurance" },
-                new { Id = "P2", Name = "Dr. Jane Doe", Location = "Los Angeles", Insurance = "ABC Insurance" }
-            };
-        }
+        public async Task<(List<Provider>, int)> GetProviders(PaginationRequest request)
+        {            
+            var query = _context.Providers.AsQueryable();
 
-        public object GetProviderDetails(string id)
-        {
-            return new
+            // If searchTerm is provided, apply the filters
+            if (!string.IsNullOrEmpty(request.SearchTerm))
             {
-                Id = id,
-                Name = "Dr. Smith",
-                Location = "New York",
-                Procedures = new[] { "X-Ray", "MRI" },
-                Insurance = "XYZ Insurance"
-            };
+                query = query.Where(p => 
+                    p.FirstName.Contains(request.SearchTerm) ||
+                    p.LastName.Contains(request.SearchTerm) ||
+                    p.Specialty.ToString().Contains(request.SearchTerm) ||
+                    p.Email.Contains(request.SearchTerm) ||
+                    p.Phone.Contains(request.SearchTerm) ||
+                    p.Address.Contains(request.SearchTerm) ||
+                    p.Gender.Contains(request.SearchTerm)                    
+                );
+            }
+
+            // Apply pagination
+            var totalProviders = await query.CountAsync();
+            var providers = await query
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .ToListAsync();
+
+            return (providers, totalProviders);
         }
     }
 }

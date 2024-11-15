@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace onepathapi.Models
 {
@@ -10,11 +9,9 @@ namespace onepathapi.Models
         public int InitiatorUserId { get; set; }
         public int RecipientUserId { get; set; }
         public DateTime? CreatedDate { get; set; }
-        [NotMapped]
-        public User InitiatorUser { get; set; }
-        [NotMapped]
-        public User RecipientUser { get; set; }
-        [NotMapped]
-        public ICollection<Message> Messages { get; set; }
+
+        public virtual User InitiatorUser { get; set; } = new User();
+        public virtual User RecipientUser { get; set; } = new User();
+        public virtual ICollection<Message> Messages { get; set; } = new List<Message>();
     }
 }

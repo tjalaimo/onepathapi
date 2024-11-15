@@ -11,9 +11,8 @@ namespace onepathapi.Models
         public DateTime? CommentDate { get; set; }
         public int PostId { get; set; }
         public int CommentedByUserId { get; set; }
-        [NotMapped]
-        public Post Post { get; set; }
-        [NotMapped]
-        public User CommentedByUser { get; set; }
+        
+        public virtual Post Post { get; set; }
+        public virtual User CommentedByUser { get; set; }
     }
 }

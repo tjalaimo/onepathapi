@@ -10,9 +10,8 @@ namespace onepathapi.Models
         public int PostId { get; set; }
         public int LikedByUserId { get; set; }
         public DateTime? LikedDate { get; set; }
-        [NotMapped]
-        public Post Post { get; set; }
-        [NotMapped]
-        public User LikedByUser { get; set; }
+
+        public virtual Post Post { get; set; }
+        public virtual User LikedByUser { get; set; }
     }
 }

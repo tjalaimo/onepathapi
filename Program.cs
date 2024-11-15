@@ -41,7 +41,6 @@ builder.Services.AddScoped<IScanService, ScanService>();
 builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<IPostService, PostService>();
 
-
 //build
 var app = builder.Build();
 

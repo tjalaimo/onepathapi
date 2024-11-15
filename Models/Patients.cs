@@ -16,5 +16,10 @@ namespace onepathapi.Models
         public string? Email { get; set; }
         public string? MaritalStatus { get; set; }
         public string? Communication { get; set; }
+                
+        public virtual User User { get; set; }
+        public virtual ICollection<Appointment>? Appointments { get; set; }
+        public virtual ICollection<Condition>? Conditions { get; set; }    
+        public virtual ICollection<Medication>? Medications { get; set; }
     }
 }

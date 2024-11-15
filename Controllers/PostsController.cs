@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using onepathapi.Models;
 using onepathapi.Services;
+using onepathapi.DTOs;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -16,7 +17,7 @@ public class PostsController : ControllerBase
     [HttpGet("getPost")]
     public async Task<IActionResult> getPost(int postId)
     {
-        Post post = await _postService.GetPost(postId);
+        PostDTO post = await _postService.GetPost(postId);
         if (post != null)
         {
             return Ok(post);
@@ -27,17 +28,25 @@ public class PostsController : ControllerBase
         }
     }
 
-    [HttpGet("getPosts")]
-    public async Task<IActionResult> getPosts()
+    [HttpPost("getPosts")]
+    public async Task<IActionResult> getPosts([FromBody] PaginationRequest request)
     {
-        IEnumerable<Post> posts = await _postService.GetPosts();
-        return Ok(posts);
+        var (posts, totalPosts) = await _postService.GetPosts(request);
+        var result = new
+        {
+            TotalCount = totalPosts,
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize,
+            Posts = posts
+        };
+
+        return Ok(result);
     }
 
     [HttpGet("getUserPosts")]
     public async Task<IActionResult> getUserPosts(int userId)
     {
-        IEnumerable<Post> posts = await  _postService.GetUserPosts(userId);
+        IEnumerable<PostDTO> posts = await  _postService.GetUserPosts(userId);
         return Ok(posts);
     }
 

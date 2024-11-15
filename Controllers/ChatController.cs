@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using onepathapi.Services;
+using onepathapi.Models;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -12,17 +13,50 @@ public class ChatController : ControllerBase
         _chatService = chatService;
     }
 
-    [HttpGet("{userId}")]
-    public IActionResult GetChats(string userId)
+    [HttpGet("getUserChats/{userId}")]
+    public async Task<IActionResult> GetChats(int userId)
     {
-        var chats = _chatService.GetChats(userId);
-        return Ok(chats);
+        try
+        {
+            var threads = await _chatService.GetChats(userId);
+            return Ok(threads);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+
+    [HttpGet("getChat/{chatId}")]
+    public async Task<IActionResult> GetChat(int chatId)
+    {
+        try
+        {
+            var messages = await _chatService.GetChat(chatId);
+            return Ok(messages);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
     }
 
     [HttpPost("send")]
-    public IActionResult SendMessage()
+    public async Task<IActionResult> SendMessage(Message message)
     {
-        var result = _chatService.SendMessage();
-        return Ok(new { Message = result });
+        if (message == null || string.IsNullOrEmpty(message.MessageContent))
+        {
+            return BadRequest("Message content is required.");
+        }
+
+        try
+        {
+            var result = await _chatService.SendMessage(message);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
     }
 }

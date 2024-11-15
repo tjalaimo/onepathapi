@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace onepathapi.Models
 {
@@ -11,9 +10,8 @@ namespace onepathapi.Models
         public DateTime? SentDate { get; set; }
         public int ThreadId { get; set; }
         public int SentByUserId { get; set; }
-        [NotMapped]
-        public MessageThread Thread { get; set; }
-        [NotMapped]
-        public User SentByUser { get; set; }
+
+        public virtual User SentByUser { get; set; } = new User();
+        public virtual MessageThread Thread { get; set; }
     }
 }

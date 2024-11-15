@@ -7,8 +7,9 @@ namespace onepathapi.Services
 {
     public interface IPatientService
     {
-        Task<Patient> GetPatient(int patientId);
-        Task<IEnumerable<Patient>> GetPatients(PaginationRequest request);
+        Task<BasePatientDTO> GetPatient(int patientId);
+        Task<BasePatientDTO> GetPatientByUserId(int userId);
+        Task<(List<BasePatientDTO>, int)> GetPatients(PaginationRequest request);
         Task<Patient> CreatePatient(Patient newPatient);
         Task<Patient> UpdatePatient(Patient patient);    
     }
@@ -23,15 +24,64 @@ namespace onepathapi.Services
             _context = context;
         }
 
-        public async Task<Patient> GetPatient(int patientId)
+        public async Task<BasePatientDTO> GetPatient(int patientId)
         {
-            return await _context.Patients.Where(p => p.PatientId == patientId).FirstAsync();
+            Patient patient = await _context.Patients
+                .Include(p => p.User)
+                .Include(p => p.Medications)
+                .Include(p => p.Conditions)
+                .Include(p => p.Appointments)
+                    .ThenInclude(a => a.Provider)
+                .Where(p => p.PatientId == patientId)
+                .FirstAsync();
+            return new BasePatientDTO(patient);
         }
 
-        public async Task<IEnumerable<Patient>> GetPatients(PaginationRequest request)
+        public async Task<BasePatientDTO> GetPatientByUserId(int userId)
         {
-            //TODO do search
-            return await _context.Patients.ToListAsync();
+            Patient patient = await _context.Patients
+                .Include(p => p.User)
+                .Include(p => p.Medications)
+                .Include(p => p.Conditions)
+                .Include(p => p.Appointments)
+                    .ThenInclude(a => a.Provider)
+                .Where(p => p.User.UserId == userId)
+                .FirstAsync();
+            return new BasePatientDTO(patient);
+        }
+
+        public async Task<(List<BasePatientDTO>, int)> GetPatients(PaginationRequest request)
+        {            
+            var query = _context.Patients.AsQueryable();
+
+            // If searchTerm is provided, apply the filters
+            if (!string.IsNullOrEmpty(request.SearchTerm))
+            {
+                query = query.Where(p => 
+                    p.FirstName.Contains(request.SearchTerm) ||
+                    p.LastName.Contains(request.SearchTerm) ||
+                    p.DateOfBirth.ToString().Contains(request.SearchTerm) ||
+                    p.Email.Contains(request.SearchTerm) ||
+                    p.Phone.Contains(request.SearchTerm) ||
+                    p.Address.Contains(request.SearchTerm) ||
+                    p.Conditions.Any(c => c.ConditionDescription.Contains(request.SearchTerm)) ||
+                    p.Medications.Any(m => m.MedicationName.Contains(request.SearchTerm))
+                );
+            }
+
+            // Apply pagination
+            var totalPatients = await query.CountAsync();
+            var patients = await query
+                .Include(p => p.User)
+                .Include(p => p.Medications)
+                .Include(p => p.Conditions)
+                .Include(p => p.Appointments)
+                    .ThenInclude(a => a.Provider)
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .ToListAsync();
+
+            return (patients.Select(p => new BasePatientDTO(p)).ToList(), totalPatients);
         }
 
         public async Task<Patient> CreatePatient(Patient newPatient)
@@ -43,13 +93,13 @@ namespace onepathapi.Services
 
         public async Task<Patient> UpdatePatient(Patient patient)
         {
-            var _patient = await _context.Patients.FindAsync(patient);
-            if (_patient == null) throw new ArgumentException("Appointment not found");
+            var _patient = await _context.Patients.Where(p => p.PatientId == patient.PatientId).FirstAsync();
+            if (_patient == null) throw new ArgumentException("Patient not found");
 
-            _patient = patient;
+            _context.Entry(_patient).CurrentValues.SetValues(patient);
             await _context.SaveChangesAsync();
 
-            return _patient;
+            return patient;
         }
     }
 }

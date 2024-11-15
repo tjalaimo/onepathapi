@@ -1,70 +1,72 @@
+using Microsoft.EntityFrameworkCore;
 using onepathapi.Data;
 using onepathapi.Models;
-using onepathapi.Services;
-using Microsoft.EntityFrameworkCore;
+using onepathapi.DTOs;
 
 namespace onepathapi.Services
 {
     public interface IAppointmentService
     {
-        Task<Appointment> getAppointment(int appointmentID);
-        Task<Appointment> CreateAppointment(Appointment newAppointment);
-        Task<IEnumerable<Appointment>> GetUserAppointments(int patientId);
-        Task<Appointment> UpdateAppointment(Appointment Appointment);
+        Task<AppointmentDTO> getAppointment(int appointmentID);
+        Task<IEnumerable<AppointmentDTO>> GetPatientAppointments(int patientId);
+        Task<IEnumerable<AppointmentDTO>> GetProviderAppointments(int provider);
+        Task<AppointmentDTO> CreateAppointment(Appointment newAppointment);
+        Task<AppointmentDTO> UpdateAppointment(Appointment Appointment);
     }
 
     public class AppointmentService : IAppointmentService
     {
         private readonly ApplicationDbContext _context;
-        private readonly IPatientService _patientsService;
-        private readonly IProviderService _providerService;
 
-        public AppointmentService(ApplicationDbContext context, IPatientService patientsService, IProviderService providerService)
+        public AppointmentService(ApplicationDbContext context)
         {
             _context = context;
-            _patientsService = patientsService;
-            _providerService = providerService;
         }
 
-        public async Task<Appointment> getAppointment(int appointmentID)
+        public async Task<AppointmentDTO> getAppointment(int appointmentID)
         {
-            Appointment appointment = await _context.Appointments.Where(a => a.AppointmentId == appointmentID).FirstAsync();
-            if (null != appointment.PatientId)
-            {
-                appointment.Patient = await _patientsService.GetPatient(appointment.PatientId.Value);
-            }
-            if (null != appointment.ProviderId)
-            {
-                appointment.Provider = await _providerService.GetProvider(appointment.ProviderId.Value);
-            }
-            return appointment;
+            Appointment appointment = await _context.Appointments
+                .Include(a => a.Patient)
+                .Include(a => a.Provider)
+                .Where(a => a.AppointmentId == appointmentID)
+                .FirstAsync();
+
+            return new AppointmentDTO(appointment);
         }
 
-        public async Task<Appointment> CreateAppointment(Appointment newAppointment)
-        {
-            _context.Appointments.Add(newAppointment);
-            newAppointment.AppointmentId = await _context.SaveChangesAsync();
-            return newAppointment;
-        }
 
-        public async Task<IEnumerable<Appointment>> GetUserAppointments(int patientId)
+        public async Task<IEnumerable<AppointmentDTO>> GetProviderAppointments(int providerId)
         {
-            IEnumerable<Appointment> appointments = await _context.Appointments.Where(a => a.PatientId == patientId).ToListAsync();
-            foreach (Appointment appointment in appointments)
-            {
-                if (null != appointment.PatientId)
-                {
-                    appointment.Patient = await _patientsService.GetPatient(appointment.PatientId.Value);
-                }
-                if (null != appointment.ProviderId)
-                {
-                    appointment.Provider = await _providerService.GetProvider(appointment.ProviderId.Value);
-                }
-            }
+            IEnumerable<AppointmentDTO> appointments = await _context.Appointments
+                .Include(a => a.Patient)
+                .Include(a => a.Provider)
+                .Where(a => a.ProviderId == providerId)
+                .Select(a => new AppointmentDTO(a))
+                .ToListAsync();
+
             return appointments;
         }
 
-        public async Task<Appointment> UpdateAppointment(Appointment appointment)
+        public async Task<IEnumerable<AppointmentDTO>> GetPatientAppointments(int patientId)
+        {
+            IEnumerable<AppointmentDTO> appointments = await _context.Appointments
+                .Include(a => a.Patient)
+                .Include(a => a.Provider)
+                .Where(a => a.PatientId == patientId)
+                .Select(a => new AppointmentDTO(a))
+                .ToListAsync();
+
+            return appointments;
+        }
+
+        public async Task<AppointmentDTO> CreateAppointment(Appointment newAppointment)
+        {
+            _context.Appointments.Add(newAppointment);
+            newAppointment.AppointmentId = await _context.SaveChangesAsync();
+            return new AppointmentDTO(newAppointment);
+        }
+
+        public async Task<AppointmentDTO> UpdateAppointment(Appointment appointment)
         {
             var _appointment = await _context.Appointments.FindAsync(appointment);
             if (_appointment == null) throw new ArgumentException("Appointment not found");
@@ -72,7 +74,7 @@ namespace onepathapi.Services
             _appointment = appointment;
             await _context.SaveChangesAsync();
 
-            return _appointment;
+            return new AppointmentDTO(_appointment);
         }
     }
 }

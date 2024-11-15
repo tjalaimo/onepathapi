@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using onepathapi.Services;
+using onepathapi.DTOs;
+using onepathapi.Models;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -12,17 +14,35 @@ public class ProvidersController : ControllerBase
         _providerService = providerService;
     }
 
-    [HttpGet]
-    public IActionResult GetAllProviders()
+    [HttpPost("getProviders")]
+    public async Task<IActionResult> GetProviders([FromBody] PaginationRequest request)
     {
-        var providers = _providerService.GetAllProviders();
-        return Ok(providers);
+        var (providers, totalProviders) = await _providerService.GetProviders(request);
+
+        // Return paginated result along with total patient count
+        var result = new
+        {
+            TotalCount = totalProviders,
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize,
+            Providers = providers
+        };
+
+        return Ok(result);
     }
 
-    [HttpGet("{id}")]
-    public IActionResult GetProviderDetails(string id)
+    [HttpGet("getProvider/{providerId}")]
+    public async Task<IActionResult> GetProvider(int providerId)
     {
-        var provider = _providerService.GetProviderDetails(id);
-        return Ok(provider);
+        Provider provider = await _providerService.GetProvider(providerId);
+        if (provider != null)
+        {
+            return Ok(provider);
+        }
+        else
+        {
+            return NotFound();
+        }
+        
     }
 }
