@@ -34,7 +34,7 @@ public class ProvidersController : ControllerBase
     [HttpGet("getProvider/{providerId}")]
     public async Task<IActionResult> GetProvider(int providerId)
     {
-        Provider provider = await _providerService.GetProvider(providerId);
+        BaseProviderDTO provider = await _providerService.GetProvider(providerId);
         if (provider != null)
         {
             return Ok(provider);

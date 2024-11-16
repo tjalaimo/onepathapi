@@ -20,6 +20,8 @@ namespace onepathapi.DTOs
         public IEnumerable<BaseMedicationDTO>? Medications { get; set; }
         public IEnumerable<BaseConditionDTO>? Conditions { get; set; }
 
+        public BasePatientDTO() {}
+
         public BasePatientDTO(Patient patient)
         {
             PatientId = patient.PatientId;

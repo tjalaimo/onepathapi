@@ -12,6 +12,8 @@ namespace onepathapi.DTOs
         public string? Notes { get; set; }
         public BaseProviderDTO Provider { get; set; }
 
+        public BaseAppointmentDTO() {}
+
         public BaseAppointmentDTO(Appointment appointment)
         {
             AppointmentId = appointment.AppointmentId;
@@ -28,6 +30,8 @@ namespace onepathapi.DTOs
     {
         public BasePatientDTO Patient { get; set; }
         public BaseProviderDTO Provider { get; set; }
+
+        public AppointmentDTO() : base() {}
 
         public AppointmentDTO(Appointment appointment) : base(appointment)
         {

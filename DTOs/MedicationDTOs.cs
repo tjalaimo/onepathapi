@@ -12,6 +12,8 @@ namespace onepathapi.DTOs
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
 
+        public BaseMedicationDTO() {}
+
         public BaseMedicationDTO(Medication medication)
         {
             MedicationId = medication.MedicationId;

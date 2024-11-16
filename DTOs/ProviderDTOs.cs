@@ -13,6 +13,9 @@ namespace onepathapi.DTOs
         public string? Phone { get; set; }
         public string? Email { get; set; }
         public string? Address { get; set; }
+        public BaseUserDTO? User { get; set; }
+
+        public BaseProviderDTO() {}
 
         public BaseProviderDTO(Provider provider)
         {
@@ -24,6 +27,7 @@ namespace onepathapi.DTOs
             Specialty = provider.Specialty;
             Email = provider.Email;
             Address = provider.Address;
+            User = provider.User != null ? new BaseUserDTO(provider.User) : null;
         }
     }
 }

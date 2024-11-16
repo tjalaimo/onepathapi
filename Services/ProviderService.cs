@@ -7,8 +7,8 @@ namespace onepathapi.Services
 {
     public interface IProviderService
     {
-        Task<Provider> GetProvider(int providerId);
-        Task<(List<Provider>, int)> GetProviders(PaginationRequest request);        
+        Task<BaseProviderDTO> GetProvider(int providerId);
+        Task<(List<BaseProviderDTO>, int)> GetProviders(PaginationRequest request);        
     }
 
     public class ProviderService : IProviderService
@@ -21,12 +21,17 @@ namespace onepathapi.Services
             _context = context;
         }
 
-        public async Task<Provider> GetProvider(int providerId)
+        public async Task<BaseProviderDTO> GetProvider(int providerId)
         {
-            return await _context.Providers.Where(p => p.ProviderId == 10).FirstAsync();            
+            Provider provider = await _context.Providers
+                .Include(p => p.User)
+                .Where(p => p.ProviderId == providerId)
+                .FirstAsync();
+
+            return new BaseProviderDTO(provider);
         }
 
-        public async Task<(List<Provider>, int)> GetProviders(PaginationRequest request)
+        public async Task<(List<BaseProviderDTO>, int)> GetProviders(PaginationRequest request)
         {            
             var query = _context.Providers.AsQueryable();
 
@@ -40,18 +45,20 @@ namespace onepathapi.Services
                     p.Email.Contains(request.SearchTerm) ||
                     p.Phone.Contains(request.SearchTerm) ||
                     p.Address.Contains(request.SearchTerm) ||
-                    p.Gender.Contains(request.SearchTerm)                    
+                    p.Gender.Contains(request.SearchTerm) ||
+                    p.Identifier.Contains(request.SearchTerm)                  
                 );
             }
 
             // Apply pagination
             var totalProviders = await query.CountAsync();
             var providers = await query
+                .Include(p => p.User)
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .ToListAsync();
 
-            return (providers, totalProviders);
+            return (providers.Select(p => new BaseProviderDTO(p)).ToList(), totalProviders);
         }
     }
 }

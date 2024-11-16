@@ -28,13 +28,6 @@ public class AppointmentsController : ControllerBase
         }
     }
 
-    [HttpPost("create")]
-    public async Task<IActionResult> CreateAppointment([FromBody] Appointment appointment)
-    {
-        AppointmentDTO result = await _appointmentService.CreateAppointment(appointment);
-        return Ok(result);
-    }
-
     [HttpGet("getPatientAppointments/{patientId}")]
     public async Task<IActionResult> GetPatientAppointments(int patientId)
     {
@@ -49,10 +42,17 @@ public class AppointmentsController : ControllerBase
         return Ok(appointments);
     }
 
-    [HttpPost("update")]
-    public async Task<IActionResult> UpdateAppointment([FromBody] Appointment appointment)
+    [HttpPost("create")]
+    public async Task<IActionResult> CreateAppointment([FromBody] AppointmentDTO appointment)
     {
-        AppointmentDTO result = await _appointmentService.UpdateAppointment(appointment);
+        BaseAppointmentDTO result = await _appointmentService.CreateAppointment(appointment);
+        return Ok(result);
+    }
+
+    [HttpPost("update")]
+    public async Task<IActionResult> UpdateAppointment([FromBody] AppointmentDTO appointment)
+    {
+        BaseAppointmentDTO result = await _appointmentService.UpdateAppointment(appointment);
         return Ok(result);
     }
 }

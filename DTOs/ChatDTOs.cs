@@ -10,6 +10,8 @@ namespace onepathapi.DTOs
         public DateTime? SentDate { get; set; }
         public BaseUserDTO SentByUser { get; set; }
 
+        public MessageDTO() {}
+
         public MessageDTO(Message message)
         {
             MessageId = message.MessageId;

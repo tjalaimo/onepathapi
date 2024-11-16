@@ -14,6 +14,8 @@ namespace onepathapi.DTOs
         public string? CommentPreview { get; set; }
         public IEnumerable<PostCommentDTO>? Comments { get; set; }
 
+        public PostDTO() {}
+
         public PostDTO(Post post)
         {
             PostId = post.PostId;
@@ -35,6 +37,8 @@ namespace onepathapi.DTOs
         public DateTime? CommentDate { get; set; }
         public int PostId { get; set; }
         public BaseUserDTO CommentedByUser { get; set; }
+
+        public PostCommentDTO() {}
 
         public PostCommentDTO(PostComment postComment)
         {

@@ -32,6 +32,7 @@ namespace onepathapi.Services
                 .Include(p => p.Conditions)
                 .Include(p => p.Appointments)
                     .ThenInclude(a => a.Provider)
+                    .ThenInclude(p => p.User)
                 .Where(p => p.PatientId == patientId)
                 .FirstAsync();
             return new BasePatientDTO(patient);
@@ -45,6 +46,7 @@ namespace onepathapi.Services
                 .Include(p => p.Conditions)
                 .Include(p => p.Appointments)
                     .ThenInclude(a => a.Provider)
+                    .ThenInclude(p => p.User)
                 .Where(p => p.User.UserId == userId)
                 .FirstAsync();
             return new BasePatientDTO(patient);
@@ -77,6 +79,7 @@ namespace onepathapi.Services
                 .Include(p => p.Conditions)
                 .Include(p => p.Appointments)
                     .ThenInclude(a => a.Provider)
+                    .ThenInclude(p => p.User)
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .ToListAsync();

@@ -9,6 +9,8 @@ namespace onepathapi.DTOs
         public string? ConditionDescription { get; set; }
         public DateTime? OnsetDate { get; set; }
 
+        public BaseConditionDTO() {}
+
         public BaseConditionDTO(Condition condition)
         {
             ConditionId = condition.ConditionId;

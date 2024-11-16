@@ -9,6 +9,8 @@ namespace onepathapi.DTOs
         public string DisplayName { get; set; }
         public string? ProfilePictureURL { get; set; }
 
+        public BaseUserDTO() {}
+
         public BaseUserDTO(User user)
         {
             UserId = user.UserId;
